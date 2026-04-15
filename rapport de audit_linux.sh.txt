@@ -1,0 +1,50 @@
+rapport de audit_linux.sh
+
+avant ajout supplémentaire :
+
+===== SSH =====
+[FAIL] Service SSH inactif
+
+===== UFW =====
+ERROR: You need to be root to run this script
+[WARN] UFW installé mais inactif
+
+===== /etc/passwd =====
+Owner: root / Group: root / Perms: 644
+[OK] /etc/passwd correctement protégé
+
+===== Services en écoute =====
+[WARN] Aucun service en écoute trouvé
+\nRapport généré : ./audit_2026-04-15_08-11-12/rapport_audit_2026-04-15_08-11-12.txt
+
+
+
+Rapport d'audit Linux - 2026-04-15T08:22:52-04:00
+Hôte: kali
+
+===== SSH =====
+[FAIL] Service SSH inactif
+
+===== UFW =====
+ERROR: You need to be root to run this script
+[WARN] UFW installé mais inactif
+
+===== /etc/passwd =====
+Owner: root / Group: root / Perms: 644
+[OK] /etc/passwd correctement protégé
+
+===== Services en écoute =====
+[WARN] Aucun service en écoute trouvé
+
+===== Mises à jour système =====
+[WARN] 533 mises à jour disponibles
+
+===== /etc/shadow =====
+[OK] Aucun compte sans mot de passe
+
+===== ~/.ssh =====
+/home/kali/.ssh -> owner=kali perms=700
+[OK] /home/kali/.ssh sécurisé
+
+Rapport généré : ./audit_2026-04-15_08-22-52/rapport_audit_2026-04-15_08-22-52.txt
+                                                                                                     
