@@ -1,0 +1,58 @@
+Rapport de sécurisation du système – SSH et configuration générale
+
+1. Détail des modifications SSH
+
+Plusieurs mesures ont été mises en place afin de sécuriser l’accès SSH.
+
+Le port par défaut a été modifié (22 → 2222) afin de réduire les attaques automatisées.
+L’accès root a été désactivé avec PermitRootLogin no, empêchant toute connexion directe en administrateur.
+
+L’authentification par mot de passe a été désactivée (PasswordAuthentication no) pour éviter les attaques par force brute.
+À la place, l’authentification par clé a été activée (PubkeyAuthentication yes) avec ajout d’une clé publique dans ~/.ssh/authorized_keys.
+
+2. État des règles UFW après configuration
+
+Le pare-feu UFW a été activé afin de contrôler les flux réseau et de limiter l’exposition des services.
+
+La politique par défaut a été définie comme suit :
+
+Trafic entrant : refusé (deny)
+Trafic sortant : autorisé (allow)
+
+Seuls les ports strictement nécessaires ont été autorisés :
+
+2222/tcp pour l’accès SSH sécurisé
+80/tcp pour le service HTTP
+443/tcp pour le service HTTPS
+
+Tous les autres ports sont bloqués par défaut, ce qui permet de réduire considérablement la surface d’attaque.
+
+3. Fichiers, permissions et comptes
+
+Permissions des fichiers
+
+Une attention particulière a été portée à la sécurisation des fichiers sensibles.
+
+Le fichier /etc/shadow, contenant les informations d’authentification, a été vérifié :
+
+Permissions : 640
+Propriétaire : root
+Groupe : shadow
+
+Ces paramètres garantissent un accès restreint aux seuls utilisateurs autorisés.
+
+Une analyse des fichiers avec permissions dangereuses a été réalisée à l’aide de la commande suivante :
+find / -perm 777 -type f
+
+Aucun fichier présentant des permissions excessives n’a été détecté.
+
+4. Conclusion
+
+Les mesures mises en place ont permis d’améliorer la sécurité globale du système :
+
+Accès SSH sécurisé (clé, port modifié, root désactivé)
+Réduction de la surface d’attaque via le firewall
+Protection des fichiers sensibles
+Vérification des permissions et des privilèges
+
+Une surveillance régulière reste nécessaire, notamment des logs SSH, des mises à jour système, des permissions et des comptes utilisateurs.

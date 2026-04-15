@@ -1,0 +1,59 @@
+Sécurisation du code – Analyse avant / après
+
+Section avant
+
+Pour des raisons de lisibilité, seules les parties du code ayant été modifiées sont présentées, sous forme de comparaison avant / après.
+
+Partie : Injection SQL
+
+$query  = "SELECT * FROM `users` WHERE user='$user' AND password='$pass';";
+$result = @mysql_query($query);
+Partie : XSS
+dvwaMessagePush( "You have logged in as '{$user}'" );
+Après modification
+Partie : Injection SQL
+$stmt = mysqli_prepare($GLOBALS["___mysqli_ston"],
+    "SELECT * FROM users WHERE user = ? AND password = ?"
+);
+
+mysqli_stmt_bind_param($stmt, "ss", $user, $pass);
+mysqli_stmt_execute($stmt);
+
+$result = mysqli_stmt_get_result($stmt);
+Partie : XSS
+dvwaMessagePush(
+    "You have logged in as '" .
+    htmlspecialchars($user, ENT_QUOTES, 'UTF-8') .
+    "'"
+);
+
+Partie : Headers de sécurité
+
+Les en-têtes suivants ont été ajoutés :
+
+Header('X-Frame-Options: DENY');
+Header('X-Content-Type-Options: nosniff');
+Header('X-XSS-Protection: 1; mode=block');
+Explications
+Injection SQL
+
+Dans la version initiale, la requête SQL utilisait directement les données saisies par l’utilisateur, ce qui la rendait vulnérable aux injections SQL. Un attaquant pouvait modifier la requête en injectant du code malveillant.
+
+La correction repose sur l’utilisation de requêtes préparées avec mysqli. Cette méthode permet de séparer la structure de la requête des données utilisateurs, ce qui empêche toute modification du comportement de la requête et sécurise l’accès à la base de données.
+
+XSS
+
+Dans le code initial, les données utilisateur étaient affichées sans aucun traitement, ce qui ouvrait la possibilité d’injecter du code JavaScript dans la page.
+
+L’ajout de la fonction htmlspecialchars() permet de transformer les caractères spéciaux en entités HTML, empêchant ainsi l’exécution de scripts malveillants dans le navigateur.
+
+Headers de sécurité
+
+Des en-têtes HTTP ont été ajoutés afin de renforcer la sécurité globale de l’application.
+Ils permettent notamment de :
+
+Bloquer l’intégration du site dans une iframe (protection contre le clickjacking)
+Empêcher certaines mauvaises interprétations du contenu par le navigateur
+Ajouter une couche de protection supplémentaire contre certaines attaques XSS
+
+Ces modifications permettent de corriger des vulnérabilités critiques tout en améliorant globalement la sécurité de l’application, sans modifier son fonctionnement principal.

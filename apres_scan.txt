@@ -1,0 +1,51 @@
+Rapport du jour 1 : Scan Nmap – Analyse post-scan
+
+IP cible
+
+10.0.2.15
+
+Ports ouverts détectés
+
+Le scan Nmap effectué sur la machine cible a permis d’identifier deux ports ouverts :
+
+80/tcp → Service HTTP (Microsoft IIS httpd 10.0)
+5985/tcp → Service HTTP (Microsoft HTTPAPI 2.0 / WinRM)
+
+La présence de ces ports indique que la machine héberge à la fois un service web accessible et un service d’administration à distance.
+
+Services identifiés
+Service Web (Port 80)
+
+Le port 80 est ouvert et héberge un serveur web basé sur Microsoft IIS 10.0.
+Ce type de serveur est couramment utilisé sur les environnements Windows pour héberger des sites ou des applications web.
+
+Sa présence représente un point d’entrée potentiel, notamment si des pages, fonctionnalités ou configurations sont mal sécurisées.
+
+Administration distante (Port 5985)
+
+Le port 5985 correspond au service WinRM (Windows Remote Management), qui permet l’administration à distance de la machine via HTTP.
+
+Ce service est généralement utilisé par les administrateurs pour exécuter des commandes ou gérer le système à distance.
+Cependant, s’il est exposé sans restrictions suffisantes, il peut représenter une surface d’attaque intéressante.
+
+Analyse globale
+
+L’analyse du scan montre que la machine cible est relativement bien protégée, avec la majorité des ports filtrés, ce qui suggère la présence d’un pare-feu actif limitant l’exposition des services.
+
+Néanmoins, deux points d’accès restent disponibles :
+
+un serveur web (souvent une cible prioritaire en phase de reconnaissance),
+un service d’administration distante (potentiellement critique en cas de mauvaise configuration).
+
+Ces éléments indiquent que la surface d’attaque est réduite mais non négligeable.
+
+Objectifs pour la suite (après-midi)
+
+Afin d’approfondir l’analyse, les actions suivantes sont prévues :
+
+Explorer le service web accessible sur le port 80
+Identifier les pages et ressources disponibles
+Effectuer une énumération des répertoires
+Analyser les en-têtes HTTP pour détecter des informations utiles (technologies, configuration, etc.)
+
+L’objectif principal sera de déterminer si le serveur web présente des failles exploitables ou des informations sensibles accessibles.

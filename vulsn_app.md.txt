@@ -1,0 +1,70 @@
+Vulnérabilités applicatives – Jour 1
+
+1. SQL Injection (DVWA – niveau Low)
+
+Contexte
+
+L’application DVWA, volontairement vulnérable, est accessible en local et configurée avec un niveau de sécurité faible (“Low”). Cette configuration permet de mettre en évidence des failles classiques, notamment les injections SQL.
+
+Payload utilisé
+1' UNION SELECT user,password FROM users#
+Résultat observé
+
+L’injection a permis d’extraire les informations contenues dans la base de données, notamment les identifiants utilisateurs et leurs mots de passe (sous forme de hash) :
+
+admin : 5f4dcc3b5aa765d61d8327deb882cf99
+gordonb : e99a18c428cb38d5f260853678922e03
+1337 : 8d3533d75ae2c3966d7e0d4fcc69216b
+pablo : 0d107d09f5bbe40cade3de5c71e9e9b7
+smithy : 5f4dcc3b5aa765d61d8327deb882cf99
+Impact
+
+Cette vulnérabilité permet un accès direct à la base de données sans authentification valide. Elle entraîne une fuite d’informations sensibles, notamment les identifiants utilisateurs.
+
+Même si les mots de passe sont hashés, certains d’entre eux peuvent être facilement retrouvés via des techniques de cracking. Dans un contexte réel, ce type de faille peut mener à une compromission complète de l’application et potentiellement du système associé.
+
+2. XSS réfléchi (DVWA)
+
+Contexte
+
+Le module XSS (Reflected) de DVWA est également configuré en niveau de sécurité “Low”, ce qui signifie qu’aucun filtrage des entrées utilisateur n’est effectué.
+
+Payload utilisé
+<script>alert(1);</script>
+Résultat observé
+
+L’injection du script entraîne l’exécution immédiate de code JavaScript dans le navigateur, se traduisant par l’affichage d’une alerte.
+
+Impact
+
+Cette faille permet l’exécution de code côté client dans le navigateur de la victime.
+Elle peut être exploitée pour voler des cookies de session, rediriger l’utilisateur vers un site malveillant ou encore injecter du contenu frauduleux.
+
+Dans un contexte réel, ce type de vulnérabilité peut être utilisé pour compromettre des comptes utilisateurs sans nécessiter d’accès direct au serveur.
+
+3. Analyse des en-têtes HTTP
+
+Commande utilisée
+curl -v http://127.0.0.1:3000
+En-têtes observés
+X-Content-Type-Options: nosniff (présent)
+X-Frame-Options: SAMEORIGIN (présent)
+Feature-Policy : présent
+Content-Security-Policy : absent
+Impact
+
+La présence de certains en-têtes montre qu’un début de sécurisation a été mis en place, notamment contre certaines attaques liées au navigateur.
+
+Cependant, l’absence de Content-Security-Policy constitue un point faible important. Ce mécanisme permet de contrôler les ressources exécutées par le navigateur et de limiter fortement les risques liés aux attaques XSS.
+
+Son absence augmente la surface d’attaque et laisse davantage de possibilités d’exploitation côté client.
+
+Conclusion
+
+Cette première phase d’analyse a permis d’identifier plusieurs vulnérabilités applicatives critiques.
+
+L’injection SQL met en évidence une absence de sécurisation des requêtes vers la base de données, permettant l’extraction d’informations sensibles. Le XSS démontre un manque de validation des entrées utilisateur, exposant les utilisateurs à des attaques côté client.
+
+Enfin, la configuration des en-têtes HTTP reste incomplète, ce qui affaiblit la protection globale de l’application.
+
+Ces failles illustrent un niveau de sécurité insuffisant et une forte exposition aux attaques web. Des mesures correctives sont nécessaires pour sécuriser les entrées utilisateur, renforcer la configuration du serveur et limiter les risques d’exploitation.
